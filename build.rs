@@ -19,6 +19,7 @@ fn main() {
         "vendor/src/vcacheanalyzer.cpp",
         "vendor/src/vcacheoptimizer.cpp",
         "vendor/src/vertexcodec.cpp",
+        "vendor/src/vertexfilter.cpp",
         "vendor/src/vfetchanalyzer.cpp",
         "vendor/src/vfetchoptimizer.cpp",
     ];

@@ -29,6 +29,7 @@ include = [
     "vendor/src/vcacheanalyzer.cpp",
     "vendor/src/vcacheoptimizer.cpp",
     "vendor/src/vertexcodec.cpp",
+    "vendor/src/vertexfilter.cpp",
     "vendor/src/vfetchanalyzer.cpp",
     "vendor/src/vfetchoptimizer.cpp",
     "include_wasm32/*.h",
@@ -47,7 +48,7 @@ thiserror = "1.0"
 cc = { version = "1.0" }
 
 [build-dependencies.bindgen]
-version = "0.59"
+version = "0.68"
 optional = true
 
 [dev-dependencies]
