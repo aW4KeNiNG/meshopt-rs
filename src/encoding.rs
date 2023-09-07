@@ -57,16 +57,20 @@ pub fn decode_index_buffer<T: Clone + Default + Sized>(
 /// This function works for a single vertex stream; for multiple vertex streams,
 /// call `encode_vertex_buffer` for each stream.
 pub fn encode_vertex_buffer<T>(vertices: &[T]) -> Result<Vec<u8>> {
-    let bounds =
-        unsafe { ffi::meshopt_encodeVertexBufferBound(vertices.len(), mem::size_of::<T>()) };
+    encode_vertex_buffer_sized(vertices, mem::size_of::<T>())
+}
+
+pub fn encode_vertex_buffer_sized<T>(vertices: &[T], vertex_size: usize) -> Result<Vec<u8>> {
+    let vertex_count = vertices.len() / (vertex_size / mem::size_of::<T>());
+    let bounds = unsafe { ffi::meshopt_encodeVertexBufferBound(vertex_count, vertex_size) };
     let mut result: Vec<u8> = vec![0; bounds];
     let size = unsafe {
         ffi::meshopt_encodeVertexBuffer(
             result.as_mut_ptr(),
             result.len(),
             vertices.as_ptr().cast(),
-            vertices.len(),
-            mem::size_of::<T>(),
+            vertex_count,
+            vertex_size,
         )
     };
     result.resize(size, 0u8);

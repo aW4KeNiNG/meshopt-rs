@@ -92,20 +92,9 @@ pub fn optimize_vertex_cache_fifo_in_place(
 /// use `optimize_vertex_fetch_remap` + `remap_vertex_buffer` for each stream.
 ///
 /// `indices` is used both as an input and as an output index buffer.
-pub fn optimize_vertex_fetch<T: Clone + Default>(indices: &mut [u32], vertices: &[T]) -> Vec<T> {
-    let mut result: Vec<T> = vec![T::default(); vertices.len()];
-    let next_vertex = unsafe {
-        ffi::meshopt_optimizeVertexFetch(
-            result.as_mut_ptr().cast(),
-            indices.as_mut_ptr(),
-            indices.len(),
-            vertices.as_ptr().cast(),
-            vertices.len(),
-            mem::size_of::<T>(),
-        )
-    };
-    result.resize(next_vertex, T::default());
-    result
+pub fn optimize_vertex_fetch<T: Clone + Default>(indices: &mut [u32], vertices: &[T]) {
+    // TODO: Put this back
+    //optimize_vertex_fetch_sized(indices, vertices, mem::size_of::<T>())
 }
 
 /// Vertex fetch cache optimizer (modifies in place)

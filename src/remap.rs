@@ -8,7 +8,16 @@ use std::mem;
 ///
 /// The `indices` can be `None` if the input is unindexed.
 pub fn generate_vertex_remap<T>(vertices: &[T], indices: Option<&[u32]>) -> (usize, Vec<u32>) {
-    let mut remap: Vec<u32> = vec![0; vertices.len()];
+    generate_vertex_sized_remap(vertices, mem::size_of::<T>(), indices)
+}
+
+pub fn generate_vertex_sized_remap<T>(
+    vertices: &[T],
+    vertex_size: usize,
+    indices: Option<&[u32]>,
+) -> (usize, Vec<u32>) {
+    let vertex_count = vertices.len() / (vertex_size / mem::size_of::<T>());
+    let mut remap: Vec<u32> = vec![0; vertex_count];
     let vertex_count = unsafe {
         match indices {
             Some(indices) => ffi::meshopt_generateVertexRemap(
@@ -16,16 +25,16 @@ pub fn generate_vertex_remap<T>(vertices: &[T], indices: Option<&[u32]>) -> (usi
                 indices.as_ptr().cast(),
                 indices.len(),
                 vertices.as_ptr().cast(),
-                vertices.len(),
-                mem::size_of::<T>(),
+                vertex_count,
+                vertex_size,
             ),
             None => ffi::meshopt_generateVertexRemap(
                 remap.as_mut_ptr(),
                 std::ptr::null(),
-                vertices.len(),
+                vertex_count,
                 vertices.as_ptr().cast(),
-                vertices.len(),
-                mem::size_of::<T>(),
+                vertex_count,
+                vertex_size,
             ),
         }
     };
@@ -113,13 +122,22 @@ pub fn remap_vertex_buffer<T: Clone + Default>(
     vertex_count: usize,
     remap: &[u32],
 ) -> Vec<T> {
-    let mut result: Vec<T> = vec![T::default(); vertex_count];
+    remap_vertex_buffer_sized(vertices, vertex_count, mem::size_of::<T>(), remap)
+}
+
+pub fn remap_vertex_buffer_sized<T: Clone + Default>(
+    vertices: &[T],
+    vertex_count: usize,
+    vertex_size: usize,
+    remap: &[u32],
+) -> Vec<T> {
+    let mut result: Vec<T> = vec![T::default(); vertex_count * (vertex_size / mem::size_of::<T>())];
     unsafe {
         ffi::meshopt_remapVertexBuffer(
             result.as_mut_ptr().cast(),
             vertices.as_ptr().cast(),
-            vertices.len(),
-            mem::size_of::<T>(),
+            vertex_count,
+            vertex_size,
             remap.as_ptr(),
         );
     }
