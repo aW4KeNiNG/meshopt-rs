@@ -277,6 +277,7 @@ extern "C" {
         stride: usize,
         bits: ::std::os::raw::c_int,
         data: *const f32,
+        mode: ::std::os::raw::c_int,
     );
 }
 extern "C" {
@@ -303,6 +304,7 @@ extern "C" {
         vertex_positions: *const f32,
         vertex_count: usize,
         vertex_positions_stride: usize,
+        vertex_lock: *const ::std::os::raw::c_uchar,
         target_index_count: usize,
         target_error: f32,
         result_error: *mut f32,
@@ -315,6 +317,9 @@ extern "C" {
         vertex_positions: *const f32,
         vertex_count: usize,
         vertex_positions_stride: usize,
+        vertex_colors: *const f32,
+        vertex_colors_stride: usize,
+        color_weight: f32,
         target_vertex_count: usize,
     ) -> usize;
 }
